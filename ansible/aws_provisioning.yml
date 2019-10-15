@@ -4,7 +4,7 @@
   gather_facts: False
   vars:
     instance_type: t2.micro
-    security_group: cloud_optional
+    security_group: cloud
     image: ami-0edcec072887c2caa
 # rename this key as neccessary
     key_name: aws_key
@@ -44,6 +44,8 @@
         region: "{{ region }}"
         keypair: "{{ key_name }}"
         count: "{{count}}"
+        instance_tags:
+          type: server
       register: ec2
 
     - name: Add host for new instance
@@ -55,15 +57,16 @@
 
     - name: Wait for SSH to come up
       wait_for:
-        host: "{{ elastic_ip }}"
+        host: "{{ ec2.instances[0].public_dns_name }}"
         port: 22
         state: started
 
 - name: Configure Server
-  hosts: webserver
+  hosts: all:!local
   become: True
   remote_user: ubuntu
   gather_facts: False
   tags: server-config
   roles:
     - init
+    
