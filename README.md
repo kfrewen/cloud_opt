@@ -19,3 +19,6 @@ Then you can run the ansible playbook
 ```bash
 ansible-playbook -i inventory aws_provisioning.yml
 ```
+
+You may need to verify the version of python ansible is using is correct, 
+this can be modified in the ./ansible/inventory/hosts file
