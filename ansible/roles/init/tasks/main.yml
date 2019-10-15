@@ -1,0 +1,5 @@
+---
+ #Add Nginx repositories, update and upgrade packages
+ #Also install all required packages
+
+- include: docker.yml
