@@ -7,31 +7,17 @@
     security_group: cloud_optional
     image: ami-0edcec072887c2caa
 # rename this key as neccessary
-    key_name: aws_key_2
+    key_name: aws_key
     region: ap-southeast-2
     rem_user: ubuntu
     count: 1
-  vars_files:
-    - aws_keys.yml
+
   tasks:
-    - name: Amazon EC2 | Create Key Pair
-      ec2_key:
-        name: "{{ key_name }}"
-        region: "{{ region }}"
-# this file will need to change to be some local keypair create by the user
-      register: ec2_key
-
-    - name: Save private key
-      copy: content="{{ ec2_key.key.private_key }}" dest="./aws-private.pem" mode=0600
-      when: ec2_key.changed
-
     - name: Create a security group
       ec2_group:
         name: "{{ security_group }}"
         description: The webservers security group
         region: "{{ region }}"
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
         rules:
           - proto: tcp
             from_port: 22
@@ -81,4 +67,3 @@
   tags: server-config
   roles:
     - init
-
