@@ -1,14 +1,3 @@
----
-- hosts: all:!local
-  become: true
-  vars:
-    create_containers: 4
-    default_container_name: docker
-    default_container_image: ubuntu
-    default_container_command: sleep 1d
-  tasks:
-    - name: Install aptitude using apt
-      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
 
     - name: Install required system packages
       apt: name={{ item }} state=latest update_cache=yes
@@ -50,12 +39,18 @@
       git:
         repo: https://github.com/kfrewen/cloud_opt.git
         version: master
-        dest: ~/repo
+        dest: /home/ubuntu/repo
       
-    - name: run docker
+    - name: build docker
       docker_image:
         name: server
         build:
-          path: ~/repo
+          path: /home/ubuntu/repo
           source: build
       
+    - name: run docker
+      docker_container:
+        name: serve
+        image: server
+        ports:
+        - "80:80"
